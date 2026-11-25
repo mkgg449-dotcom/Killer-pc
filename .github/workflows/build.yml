@@ -1,0 +1,22 @@
+name: Build EXE
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Compile
+        run: |
+          cl /EHsc /O2 FINAL_v4.cpp /link user32.lib shell32.lib advapi32.lib powrprof.lib d3d11.lib mpr.lib netapi32.lib /SUBSYSTEM:WINDOWS
+          mt -manifest manifest.xml -outputresource:FINAL_v4.exe;#1
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FINAL_v4
+          path: FINAL_v4.exe
